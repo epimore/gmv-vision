@@ -1,37 +1,41 @@
 import {defineConfig} from 'vite'
 import vue from '@vitejs/plugin-vue'
-import {fileURLToPath, URL} from 'node:url'
+import path from 'path'
 import qiankun from 'vite-plugin-qiankun'
 
+const packageName = require('./package.json').name
+const isProd = process.env.NODE_ENV === 'production'
+
 export default defineConfig({
-    base: process.env.NODE_ENV === 'development' ? '/' : '/gb28181_app/',
+    base: isProd ? '/' : '/',
     plugins: [
         vue(),
-        qiankun('gb28181_app', {
-            useDevMode: true, // 关键：开发模式支持
-        }),
-    ],
+        qiankun(packageName, {
+            useDevMode: true,
+        }),],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url)),
+            '@': path.resolve(__dirname, 'src'),
         },
     },
     server: {
+        host: 'localhost',
         port: 1573,
         headers: {
             'Access-Control-Allow-Origin': '*',
         },
     },
     build: {
-        target: 'esnext',
+        outDir: `../dist/${packageName}`,
         assetsDir: 'static',
+        target: 'esnext',
         rollupOptions: {
             output: {
-                format: 'umd',               // ✅ 必须是 umd
-                name: 'gb28181_app',         // ✅ 必须指定子应用名称
-                entryFileNames: 'static/js/[name]-[hash].js',
-                chunkFileNames: 'static/js/[name]-[hash].js',
-                assetFileNames: 'static/[ext]/[name]-[hash].[ext]',
+                format: 'umd',
+                name: `${packageName}-[name]`,
+                entryFileNames: `static/js/[name]-[hash].js`,
+                chunkFileNames: `static/js/[name]-[hash].js`,
+                assetFileNames: `static/[ext]/[name]-[hash].[ext]`,
             },
         },
     },
