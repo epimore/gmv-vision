@@ -1,6 +1,7 @@
 import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event-source';
 import Auth, { ConfigEnum } from '@/common/auth.js';
 import signMd5Utils from '@/common/signMd5Utils.js';
+import event from "@/api/event.js";
 
 const SSE_CONFIG = {
     MAX_RETRIES: 5,
@@ -41,17 +42,16 @@ const sse = (url, onMessage, onError) => {
     const startSSE = () => {
         controller = new AbortController();
 
-        const fullUrl = `/api${url}`;
         const headers = {
             'Content-Type': 'application/json',
             [ConfigEnum.TOKEN]: token,
             [ConfigEnum.TENANT_ID]: tenantId,
             [ConfigEnum.TIMESTAMP]: signMd5Utils.getTimestamp(),
             [ConfigEnum.VERSION]: 'v3',
-            [ConfigEnum.Sign]: signMd5Utils.getSign(fullUrl, {}) // SSE 参数通常无 query，传空对象
+            [ConfigEnum.Sign]: signMd5Utils.getSign(url, {}) // SSE 参数通常无 query，传空对象
         };
 
-        fetchEventSource(fullUrl, {
+        fetchEventSource(url, {
             method: 'POST',
             headers,
             signal: controller.signal,
@@ -99,8 +99,12 @@ const sse = (url, onMessage, onError) => {
             onclose() {
                 console.log('🚪 SSE 连接正常关闭');
                 cleanup();
-                // 通知后端断开连接
-                fetch('/epimore-gmv/sse/close', { method: 'POST' }).catch(console.error);
+                try {
+                    event.eventClose();
+                }catch (e){
+                    // 通知后端断开连接
+                    console.log(e)
+                }
             }
         });
     };
