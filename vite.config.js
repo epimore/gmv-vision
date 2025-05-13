@@ -24,6 +24,29 @@ export default defineConfig({
         headers: {
             'Access-Control-Allow-Origin': '*',
         },
+        proxy: {
+            '/api/pics': {
+                target: 'https://epimore.cn',
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/api\/pics/, '/api/pics'),
+            },
+            '/api/videos': {
+                target: 'https://epimore.cn',
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/api\/videos/, '/api/videos'),
+            },
+            '/epimore-gmv': {
+                target: 'http://127.0.0.1:38888',
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/epimore-gmv/, ''),
+                ws: true,
+            },
+            '/test_1': {
+                target: 'https://epimore.cn',
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/test_1/, '')
+            }
+        }
     },
     build: {
         outDir: `../dist/${packageName}`,

@@ -24,11 +24,11 @@ function render(props = {}) {
 // 启动 qiankun 生命周期
 renderWithQiankun({
     bootstrap(props) {
-        console.log('[子应用] bootstrap')
+        console.log('[子应用] bootstrap',props)
         common.setCommonData(props)
     },
     mount(props) {
-        console.log('[子应用] mount')
+        console.log('[子应用] mount', props)
         common.initGlState(props)
         render(props)
     },

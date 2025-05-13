@@ -1,3 +1,5 @@
+import auth from '@/common/auth';
+
 let commonData = {};
 let globalState = {};
 
@@ -20,6 +22,9 @@ const common = {
      * @param {Object} props
      */
     initGlState(props) {
+        auth.setTenantId(props.data.tenantId);
+        auth.setToken(props.data.token);
+
         // 如果主应用通过 props 传递了通信方法，监听等，可在此处理
         if (props.onGlobalStateChange) {
             props.onGlobalStateChange((state, prev) => {

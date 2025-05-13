@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import {createRouter, createWebHistory} from 'vue-router'
 import {qiankunWindow} from "vite-plugin-qiankun/es/helper";
 
 export function createMyRouter() {
@@ -7,15 +7,22 @@ export function createMyRouter() {
         routes: [
             {
                 path: '/',
-                component: () => import('@/views/Home.vue'),
+                redirect: '/home',
             },
             {
-                path: '/home',
-                component: () => import('@/views/Home.vue'),
+                path: "/home",
+                name: "home",
+                component: () => import("@/views/home/Index.vue"),
             },
             {
-                path: '/about',
-                component: () => import('@/views/About.vue'),
+                path: "/enrolls",
+                name: "enrolls",
+                component: () => import("@/views/enrolls/Infos.vue"),
+            },
+            {
+                path: "/info",
+                name: "info",
+                component: () => import("@/views/info/Index.vue"),
             },
         ],
     })
