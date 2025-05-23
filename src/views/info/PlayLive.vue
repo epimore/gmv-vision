@@ -14,10 +14,10 @@
 <script setup>
 import {nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, unref} from "vue"; // 配置文件单独拎出来
 import dcOptApi from "@/api/dcOpt.js";
-import imgUrl from '@/assets/video_poster.gif';
 import {ElMessage} from "element-plus";
+import Auth from "@/common/auth.js";
 
-
+const imgUrl = new URL('@/assets/video_poster.gif', import.meta.url).href;
 onMounted(() => {
   nextTick(() => {
     createPlayer();
@@ -106,7 +106,7 @@ const startPlay = async () => {
   const res = await getLivePlayInfo();
   if (res) {
     let flvUrl = res.flv;
-    let gmvToken = sessionStorage.getItem('Gmv-Token');
+    let gmvToken = Auth.getToken();
     streamUrl.value = flvUrl + "?gmv-token=" + gmvToken;
     return streamUrl.value;
   } else {

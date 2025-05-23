@@ -171,12 +171,11 @@
 import {computed, nextTick, onBeforeUnmount, onMounted, onUnmounted, ref, unref, watch} from "vue"; // 配置文件单独拎出来
 import streamApi from "@/api/dcOpt.js";
 import dcOpt from "@/api/dcOpt.js";
-import imgUrl from '@/assets/video_poster.gif';
 import {dayjs, ElMessage} from "element-plus";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
-import http from "@/common/http/http.js";
-
+import Auth from "@/common/auth.js";
+const imgUrl = new URL('@/assets/video_poster.gif', import.meta.url).href;
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
@@ -483,7 +482,7 @@ const startPlay = async () => {
   if (res) {
     let flvUrl = res.flv;
     streamId.value = res.streamId;
-    let gmvToken = sessionStorage.getItem('Gmv-Token');
+    let gmvToken = Auth.getToken();
     const url = flvUrl + "?gmv-token=" + gmvToken;
     unref(easyplayer).play(url);
     progressTime = min.value;

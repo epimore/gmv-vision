@@ -7,6 +7,7 @@ const packageName = require('./package.json').name
 const isProd = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
+    assetsInclude: ['public/EasyPlayer-pro.js'],
     base: isProd ? '/' : '/',
     plugins: [
         vue(),

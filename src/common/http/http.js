@@ -1,4 +1,5 @@
 import instance from "./axios.js"
+import Auth from "@/common/auth.js";
 
 const post = (url, data) => {
     return new Promise((resolve, reject) => {
@@ -43,7 +44,7 @@ export const request_image = async (url) => {
 };
 
 const downVideo = (fileId, videoUrl) => {
-    const token = sessionStorage.getItem('Gmv-Token') || '';
+    const token = Auth.getToken() || '';
 
     const form = document.createElement('form');
     form.method = 'POST';

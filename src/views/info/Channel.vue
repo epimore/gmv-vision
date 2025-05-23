@@ -113,11 +113,12 @@
 import {onMounted, onUnmounted, ref, watchEffect} from "vue";
 import infosApi from "@/api/info.js";
 import {ElMessage} from "element-plus";
-import imgUrl from '@/assets/ipc.png'
 import PlayLive from "@/views/info/PlayLive.vue";
 import PlayBack from "@/views/info/PlayBack.vue";
 import {Download, Refresh, RefreshLeft, RefreshRight, ZoomIn, ZoomOut,} from '@element-plus/icons-vue'
 import Pics from "@/views/info/PicPage.vue";
+
+const imgUrl = new URL('@/assets/ipc.png', import.meta.url).href
 
 const channels = ref([]);
 const deviceInfo = ref(null)
