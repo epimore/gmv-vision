@@ -8,7 +8,7 @@ const isProd = process.env.NODE_ENV === 'production'
 
 export default defineConfig({
     assetsInclude: ['public/EasyPlayer-pro.js'],
-    base: isProd ? '/' : '/',
+    base: isProd ? '/gb28181_app/' : '/',
     plugins: [
         vue(),
         qiankun(packageName, {
@@ -37,9 +37,9 @@ export default defineConfig({
                 rewrite: path => path.replace(/^\/api\/videos/, '/api/videos'),
             },
             '/epimore-gmv': {
-                target: 'http://127.0.0.1:38888',
+                target: 'https://epimore.cn',
                 changeOrigin: true,
-                rewrite: path => path.replace(/^\/epimore-gmv/, ''),
+                rewrite: path => path.replace(/^\/epimore-gmv/, '/epimore-gmv'),
                 ws: true,
             },
             '/test_1': {

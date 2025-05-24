@@ -1,5 +1,6 @@
 import {ElMessage} from 'element-plus';
-import Auth from "@/common/auth.js";
+import Auth, {ConfigEnum} from "@/common/auth.js";
+import signMd5Utils from "@/common/signMd5Utils.js";
 
 // 超时时间，单位 ms
 const TIMEOUT = 30000;
@@ -52,23 +53,15 @@ const request = (url, options = {}) => {
     const controller = new AbortController();
     const signal = controller.signal;
 
-    // 自动加上 Token
-    const token = Auth.getToken();
-    const headers = {
-        'Content-Type': 'application/json',
-        ...(token ? {'Gmv-Token': token} : {}),
-        ...options.headers
-    };
-
     // 开启超时定时器
     const timeoutId = setTimeout(() => {
         controller.abort();
     }, TIMEOUT);
 
     url = url.startsWith('./') ? url.substring(1) : url;
-    return fetch('/api' + url, {
+    return fetch('/epimore-gmv' + url, {
         ...options,
-        headers,
+        headers: buildHeaders(url, options),
         signal
     }).then(async response => {
         clearTimeout(timeoutId);
@@ -97,5 +90,28 @@ const request = (url, options = {}) => {
         return Promise.reject(error);
     });
 };
+
+function buildHeaders(url, options) {
+    const rawUrl = url.startsWith('./') ? url.substring(1) : url;
+    const token = Auth.getToken();
+    const tenantId = Auth.getTenantId();
+    const timestamp = signMd5Utils.getTimestamp();
+    const version = 'v3';
+    const params = options.method === 'GET'
+        ? (options.params || {})
+        : (JSON.parse(options.body || '{}'));
+    const sign = signMd5Utils.getSign(rawUrl, params);
+
+    return {
+        'Content-Type': 'application/json',
+        ...(token && {[ConfigEnum.TOKEN]: token}),
+        ...(tenantId && {[ConfigEnum.TENANT_ID]: tenantId}),
+        [ConfigEnum.TIMESTAMP]: timestamp,
+        [ConfigEnum.VERSION]: version,
+        [ConfigEnum.Sign]: sign,
+        ...options.headers
+    };
+}
+
 
 export default request;

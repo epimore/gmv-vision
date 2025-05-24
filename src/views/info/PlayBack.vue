@@ -196,14 +196,14 @@ onUnmounted(() => {
 const downVideoLoading = ref(false);
 const downVideo = (fileId, videoUrl) => {
   downVideoLoading.value = true;
-  const a = document.createElement('a');
-  a.href = "https://epimore.cn/api"+videoUrl;
-  a.download = fileId+".mp4"; // 自定义保存的文件名
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  // http.downVideo(fileId, videoUrl);
-  // dcOpt.down_video(fileId);
+  // const a = document.createElement('a');
+  // a.href = "https://epimore.cn/api"+videoUrl;
+  // a.download = fileId+".mp4"; // 自定义保存的文件名
+  // document.body.appendChild(a);
+  // a.click();
+  // document.body.removeChild(a);
+  // // http.downVideo(fileId, videoUrl);
+  dcOpt.down_video(fileId);
   // down_video(videoUrl).then(res => {
   //   const blob = new Blob([res.data]);
   //   const url = window.URL.createObjectURL(blob);

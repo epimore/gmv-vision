@@ -1,4 +1,4 @@
-import instance from "./axios.js"
+import {api_instance, instance} from "./axios.js";
 import Auth from "@/common/auth.js";
 
 const post = (url, data) => {
@@ -40,7 +40,7 @@ const del = (url, data) => {
 }
 
 export const request_image = async (url) => {
-    return instance.get(url, {responseType: "blob"});
+    return api_instance.get(url, {responseType: "blob"});
 };
 
 const downVideo = (fileId, videoUrl) => {
