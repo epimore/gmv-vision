@@ -59,25 +59,44 @@ function addData(dataList, data) {
     dataList.value.pop()
   }
 }
+let controller = null;
 
-let controller = event.eventConn(
-    (msg) => {
-      console.log("🎯 收到 SSE 消息:", msg);
-      if (msg.type === 'device') {
-        addData(deviceEventArr, msg.data);
+let isConnecting = false;
+
+const initSSE = () => {
+  if (isConnecting) return;
+  isConnecting = true;
+
+  controller = event.eventConn(
+      (msg) => {
+        console.log("🎯 收到 SSE 消息:", msg);
+        if (msg.type === 'device') {
+          addData(deviceEventArr, msg.data);
+        }
+      },
+      (error) => {
+        console.error("❌ SSE 错误:", error);
+        isConnecting = false; // 出错后允许重新连接
       }
-    },
-    (error) => console.error("❌ SSE 错误:", error)
-);
+  );
+};
 
-onMounted(() => {
-
-});
-
-onUnmounted(() => {
-  if (controller) {
-    controller.close();
+const handleVisibilityChange = () => {
+  if (document.visibilityState === 'visible') {
+    console.log('🔁 页面重新激活，重连 SSE');
+    controller?.stop?.();
+    isConnecting = false;
+    initSSE();
   }
+};
+onMounted(() => {
+  initSSE();
+  document.addEventListener('visibilitychange', handleVisibilityChange);
+});
+onUnmounted(() => {
+  controller?.stop?.();
+  isConnecting = false;
+  document.removeEventListener('visibilitychange', handleVisibilityChange);
 });
 </script>
 

@@ -5,7 +5,7 @@ const eventConn = (onMessage, onError) => {
     return sse('/epimore-gmv/sse/connect', onMessage, onError);
 };
 const eventClose = () => {
-    return http.post("/epimore-gmv/sse/close", null);
+    return http.post("/sse/close", null);
 };
 
 export default {
