@@ -175,6 +175,7 @@ import {dayjs, ElMessage} from "element-plus";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 import Auth from "@/common/auth.js";
+
 const imgUrl = new URL('@/assets/video_poster.gif', import.meta.url).href;
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -196,14 +197,15 @@ onUnmounted(() => {
 const downVideoLoading = ref(false);
 const downVideo = (fileId, videoUrl) => {
   downVideoLoading.value = true;
-  // const a = document.createElement('a');
-  // a.href = "https://epimore.cn/api"+videoUrl;
-  // a.download = fileId+".mp4"; // 自定义保存的文件名
-  // document.body.appendChild(a);
-  // a.click();
-  // document.body.removeChild(a);
+  const a = document.createElement('a');
+  const token = Auth.getToken() || '';
+  a.href = "https://epimore.cn/api" + videoUrl + "?token=" + token;
+  a.download = fileId + ".mp4"; // 自定义保存的文件名
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
   // // http.downVideo(fileId, videoUrl);
-  dcOpt.down_video(fileId);
+  // dcOpt.down_video(fileId);
   // down_video(videoUrl).then(res => {
   //   const blob = new Blob([res.data]);
   //   const url = window.URL.createObjectURL(blob);
