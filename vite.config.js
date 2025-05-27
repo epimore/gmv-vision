@@ -37,7 +37,8 @@ export default defineConfig({
                 rewrite: path => path.replace(/^\/api\/videos/, '/api/videos'),
             },
             '/epimore-gmv': {
-                target: 'https://epimore.cn',
+                target: 'http://127.0.0.1:38888',
+                // target: 'https://epimore.cn',
                 changeOrigin: true,
                 rewrite: path => path.replace(/^\/epimore-gmv/, '/epimore-gmv'),
                 ws: true,

@@ -8,14 +8,23 @@ import {ElMessage, ElMessageBox} from "element-plus";
 onMounted(() => {
   getDeviceList();
 })
+const pageNum = ref(1); // 当前页码
+const pageSize = ref(10); // 每页数量
+const total = ref(0); // 总数
 let tableData = ref([]);
 const searchForm = reactive({
-  alias: ''
+  alias: '',
+  pageNum: pageNum.value,
+  pageSize: pageSize.value,
 })
+const handlePageChange = (newPage) => {
+  pageNum.value = newPage;
+  getDeviceList(); // 重新请求数据
+};
 const getDeviceList = async () => {
   try {
     const res = await infosApi.devicesInfo(searchForm);
-    tableData.value = res.data.data;
+    tableData.value = res.data.data.list;
   } catch (error) {
     ElMessage.error("获取设备列表失败");
   }
@@ -120,6 +129,16 @@ const switchToChannel = (device) => {
           </template>
         </el-table-column>
       </el-table>
+      <div style="display: flex; justify-content: center; align-items: center; margin-top: 10px">
+        <el-pagination
+            background
+            layout="prev, pager, next, jumper"
+            :total="total"
+            :page-size="pageSize"
+            :current-page="pageNum"
+            @current-change="handlePageChange"
+        />
+      </div>
     </el-card>
   </div>
 </template>
