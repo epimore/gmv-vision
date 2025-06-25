@@ -18,6 +18,7 @@ const searchForm = reactive({
   pageSize: pageSize.value,
 })
 const handlePageChange = (newPage) => {
+  searchForm.pageNum = newPage;
   pageNum.value = newPage;
   getDeviceList(); // 重新请求数据
 };
@@ -25,6 +26,7 @@ const getDeviceList = async () => {
   try {
     const res = await infosApi.devicesInfo(searchForm);
     tableData.value = res.data.data.list;
+    total.value = res.data.data.total || 0;
   } catch (error) {
     ElMessage.error("获取设备列表失败");
   }

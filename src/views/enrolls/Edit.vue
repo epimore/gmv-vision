@@ -11,21 +11,31 @@
         :model="formInfo"
         class="edit"
         label-width="120px"
+        :disabled="dialogTitle==='查看详情'"
     >
-      <el-form-item label="SIP设备ID：" prop="deviceId" required>
+      <el-form-item label="SIP设备ID：" prop="deviceId" v-show="dialogTitle!=='添加设备'">
         <el-input :disabled="dialogTitle==='编辑设备'" v-model="formInfo.deviceId"></el-input>
       </el-form-item>
-      <el-form-item label="SIP服务器ID：" prop="domainId" required>
+      <el-form-item label="SIP服务器ID：" prop="domainId" v-show="dialogTitle!=='添加设备'">
         <el-input :disabled="dialogTitle==='编辑设备'" v-model="formInfo.domainId"></el-input>
       </el-form-item>
-      <el-form-item label="SIP服务器域：" prop="domain" required>
+      <el-form-item label="SIP服务器域：" prop="domain" v-show="dialogTitle!=='添加设备'">
         <el-input :disabled="dialogTitle==='编辑设备'" v-model="formInfo.domain"></el-input>
       </el-form-item>
       <el-form-item label="设备名称：" prop="alias" required>
         <el-input v-model="formInfo.alias"></el-input>
       </el-form-item>
+      <el-form-item label="经度：" prop="longitude">
+        <el-input v-model="formInfo.longitude"></el-input>
+      </el-form-item>
+      <el-form-item label="维度：" prop="latitude">
+        <el-input v-model="formInfo.latitude"></el-input>
+      </el-form-item>
+      <el-form-item label="地址：" prop="address">
+        <el-input v-model="formInfo.address"></el-input>
+      </el-form-item>
       <el-form-item label="心跳周期(秒)：" prop="heartbeatSec" required>
-        <el-input v-model="formInfo.heartbeatSec"></el-input>
+        <el-input v-model="formInfo.heartbeatSec" placeholder="需大于等于60秒"></el-input>
       </el-form-item>
       <el-form-item label="状态：" prop="status" required v-show="dialogTitle==='编辑设备'">
         <el-switch
@@ -48,8 +58,8 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer" style="right: auto">
-        <el-button type="primary" @click="submitForm">确定</el-button>
-        <el-button @click="closeDialog">取消</el-button>
+        <el-button type="primary" @click="submitForm" v-show="dialogTitle!=='查看详情'">保存</el-button>
+        <el-button @click="closeDialog" type="success">关闭</el-button>
       </div>
     </template>
   </el-dialog>
@@ -119,7 +129,7 @@ const submitForm = () => {
               closeDialog(1);
             }
           })
-        } else if (props.dialogTitle === "编辑设备") {
+        } else if (props.dialogTitle === "编辑查看") {
           // 调用编辑接口
           enrollsApi.modify(formInfo).then((res) => {
             if (res.data.code === 200) {

@@ -14,12 +14,12 @@
                 :cell-style="{ textAlign: 'center' }"
                 :header-cell-style="{ textAlign: 'center',background: '#f5f7fa', color: '#606266' }">
         <el-table-column label="序号" type="index" width="60"/>
-        <el-table-column prop="deviceId" label="SIP设备ID" width="200"/>
-        <el-table-column prop="alias" label="设备名称" width="220"/>
-        <el-table-column prop="domainId" label="SIP服务器ID" width="200"/>
-        <el-table-column prop="domain" label="SIP服务器域" width="120"/>
-        <el-table-column prop="heartbeatSec" label="心跳周期(秒)" width="120"/>
-        <el-table-column prop="status" label="状态" width="98">
+        <el-table-column prop="deviceId" label="SIP设备ID" width="190"/>
+        <el-table-column prop="alias" label="设备名称" width="200"/>
+        <el-table-column prop="domainId" label="SIP服务器ID" width="190"/>
+        <el-table-column prop="domain" label="SIP服务器域" width="110"/>
+        <el-table-column prop="heartbeatSec" label="心跳周期(秒)" width="105"/>
+        <el-table-column prop="status" label="状态" width="70">
           <template #default="scope">
             <el-tag :type="scope.row.status === '1' ? 'success' : 'danger'">{{
                 scope.row.status === '1' ? "启用" : "停用"
@@ -27,7 +27,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="pwdCheck" label="秘钥认证" width="100">
+        <el-table-column prop="pwdCheck" label="秘钥认证" width="90">
           <template #default="scope">
             <el-tag :type="scope.row.pwdCheck === '1' ? 'success' : 'danger'">{{
                 scope.row.pwdCheck === '1' ? "是" : "否"
@@ -35,13 +35,17 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="pwd" label="秘钥" width="220"/>
-        <el-table-column label="操作" width="220">
+        <el-table-column prop="pwd" label="秘钥" width="120"/>
+        <el-table-column prop="createTime" label="创建时间" width="160"/>
+        <el-table-column label="操作" width="200">
           <template #default="scope">
-            <el-button type="danger" size="small" @click="rmDevice(scope.row.deviceId)">删除</el-button>
+            <el-button type="success" size="small"
+                       @click.native.prevent="openDialog('read',scope.row)">查看
+            </el-button>
             <el-button type="warning" size="small"
                        @click.native.prevent="openDialog('edit',scope.row)">编辑
             </el-button>
+            <el-button type="danger" size="small" @click="rmDevice(scope.row.deviceId)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -89,12 +93,14 @@ const searchForm = reactive({
 })
 const handlePageChange = (newPage) => {
   pageNum.value = newPage;
+  searchForm.pageNum = newPage;
   getDeviceList(); // 重新请求数据
 };
 // 获取设备列表
 const getDeviceList = async () => {
   try {
     const res = await enrollsApi.query(searchForm);
+    total.value = res.data.data.total || 0;
     tableData.value = res.data.data.list;
   } catch (error) {
     ElMessage.error("获取设备列表失败");
@@ -133,7 +139,11 @@ const dialogTitle = ref('添加设备');
 const currentItemInfo = ref({});
 
 const openDialog = (mode, item = {}) => {
-  if (mode === 'edit') {
+  if (mode === 'read') {
+    dialogTitle.value = '查看详情';
+    currentItemInfo.value = {...item};
+    showDialog.value = true;
+  } else if (mode === 'edit') {
     dialogTitle.value = '编辑设备';
     currentItemInfo.value = {...item};
     showDialog.value = true;
