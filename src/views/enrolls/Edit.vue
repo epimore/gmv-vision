@@ -129,7 +129,7 @@ const submitForm = () => {
               closeDialog(1);
             }
           })
-        } else if (props.dialogTitle === "编辑查看") {
+        } else if (props.dialogTitle === "编辑设备") {
           // 调用编辑接口
           enrollsApi.modify(formInfo).then((res) => {
             if (res.data.code === 200) {
