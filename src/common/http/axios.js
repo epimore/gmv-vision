@@ -36,8 +36,8 @@ const base_instance = (baseURL) => {
                     case 400: ElMessage.error("请求错误"); break;
                     case 401:
                         ElMessage.error("未授权，请重新登录");
-                        // sessionStorage.removeItem("Gmv-Token");
-                        // window.location.href = "/login";
+                        sessionStorage.clear()
+                        window.location.href = "/login";
                         break;
                     case 403: ElMessage.error("拒绝访问"); break;
                     case 404: ElMessage.error("资源未找到"); break;

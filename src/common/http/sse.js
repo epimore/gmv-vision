@@ -2,6 +2,7 @@ import { EventStreamContentType, fetchEventSource } from '@microsoft/fetch-event
 import Auth, { ConfigEnum } from '@/common/auth.js';
 import signMd5Utils from '@/common/signMd5Utils.js';
 import event from "@/api/event.js";
+import {ElMessage} from "element-plus";
 
 const SSE_CONFIG = {
     MAX_RETRIES: 5,
@@ -58,6 +59,18 @@ const sse = (url, onMessage, onError) => {
             openWhenHidden: true,
 
             async onopen(response) {
+                // 👇 专门处理 401：认证失效
+                if (response.status === 401) {
+                    console.error('🔐 收到 401 响应，认证已失效');
+                    sessionStorage.clear()
+                    cleanup();
+
+                    ElMessage.error("未授权，请重新登录");
+                    window.location.href = "/login";
+                    return;
+                }
+
+
                 if (response.ok && response.headers.get('content-type') === EventStreamContentType) {
                     console.log('✅ SSE 连接成功');
                     resetHeartbeat();

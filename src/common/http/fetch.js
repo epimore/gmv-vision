@@ -13,7 +13,7 @@ function handleError(status) {
             break;
         case 401:
             ElMessage.error("未授权，请重新登录");
-            sessionStorage.removeItem("Gmv-Token");
+            sessionStorage.clear()
             window.location.href = "/login";
             break;
         case 403:
