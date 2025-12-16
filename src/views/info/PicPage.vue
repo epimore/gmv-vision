@@ -8,7 +8,7 @@
     </div>
     <div style="display: flex; justify-content: center; align-items: center; margin-top: 10px">
       <el-text tag="mark">
-        {{!props.channelInfo.alias ? props.channelInfo.channelId : props.channelInfo.alias}}
+        {{ !props.channelInfo.alias ? props.channelInfo.channelId : props.channelInfo.alias }}
       </el-text>
     </div>
     <div>
@@ -70,11 +70,39 @@
               <span style="margin-left: 3vb;">
                 <el-text type="primary" size="small">{{ item.bizTime.replace('T', ' ') }}</el-text>
               </span>
+              <span style="margin-left: 6vb;">
+                <el-tooltip
+                    v-if="item.overImage === 1"
+                    content="移除相机封面"
+                    placement="top"
+                >
+                  <el-button
+                      type="info"
+                      circle
+                      @click="handleCoverAction(0, item)"
+                  >
+                    <el-icon size="30px" color="yellow"><StarFilled /></el-icon>
+                  </el-button>
+                </el-tooltip>
+
+                <el-tooltip
+                    v-else
+                    content="设为相机封面"
+                    placement="top"
+                >
+                  <el-button
+                      type="info"
+                      circle
+                      @click="handleCoverAction(item.id, item)"
+                  >
+                    <el-icon size="25px" color="white"><Star /></el-icon>
+                  </el-button>
+                </el-tooltip>
+              </span>
             </template>
           </el-card>
         </el-col>
       </el-row>
-
       <el-col :sm="12" :lg="6" v-if="noResult" style="margin: auto">
         <el-result icon="info" title="结果提示：">
           <template #sub-title>
@@ -102,11 +130,22 @@
 import {onMounted, onUnmounted, ref, watchEffect} from "vue";
 import infosApi from "@/api/info.js";
 import {defineEmits} from "vue";
-import {Download, Refresh, RefreshLeft, RefreshRight, Search, ZoomIn, ZoomOut} from "@element-plus/icons-vue";
+import {
+  Download,
+  Refresh,
+  RefreshLeft,
+  RefreshRight,
+  Search,
+  Star,
+  StarFilled,
+  ZoomIn,
+  ZoomOut
+} from "@element-plus/icons-vue";
 import imgUrl from "@/assets/ipc.png";
 import {dayjs, ElMessage} from "element-plus";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import dcOpt from "@/api/dcOpt.js";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -144,7 +183,20 @@ const handlePageChange = (newPage) => {
   pageNum.value = newPage;
   getChannelImages(); // 重新请求数据
 };
-
+const handleCoverAction = async (picId, item) => {
+  let req = {
+    'deviceId': item.deviceId,
+    'channelId': item.channelId,
+    'imageId': picId,
+  }
+  let res = await dcOpt.overviewImage(req);
+  if (res.data.code === 200) {
+    item.overImage = picId > 0 ? 1 : -1;
+    ElMessage.success("操作成功")
+  } else {
+    ElMessage.error("操作失败")
+  }
+}
 const getChannelImages = () => {
   let did = props.channelInfo.deviceId;
   let cid = props.channelInfo.channelId;

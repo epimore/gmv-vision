@@ -37,10 +37,9 @@
                            :icon="CameraFilled"
                            circle
                            :disabled="item.status !== 'ON' || item.snapshot != 1"
-                           @click="snapshotImage(item)"
-                           title="相机图像快照"
-                           @mouseenter="showTooltip = true"
-                           @mouseleave="showTooltip = false"/>
+                           :loading="loadingStates[getKey(item)]"
+                           @click="debouncedSnapshot(item)"
+                           title="相机图像快照"/>
               </span>
               </template>
               <el-image
@@ -120,7 +119,7 @@
 </template>
 
 <script setup>
-import {onMounted, onUnmounted, ref, watchEffect} from "vue";
+import {onMounted, onUnmounted, reactive, ref, watchEffect} from "vue";
 import infosApi from "@/api/info.js";
 import {ElMessage} from "element-plus";
 import PlayLive from "@/views/info/PlayLive.vue";
@@ -199,19 +198,68 @@ watchEffect(async () => {
     }
   }
 });
-
-const snapshotImage = async (item) =>{
-  let req = {
-    'deviceId': item.deviceId,
-    'channelId': item.channelId,
-  }
-  let res = await dcOpt.snapshotImage(req);
-  if (res.data.code === 200) {
-    ElMessage.success("抓拍成功")
-  } else {
-    ElMessage.error("抓拍失败：设备不支持")
+const loadingStates = reactive({});
+const getKey = (item) => `${item.deviceId}-${item.channelId}`;
+// 防抖函数
+const debounce = (func, wait) => {
+  let timeout
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout)
+      func(...args)
+    }
+    clearTimeout(timeout)
+    timeout = setTimeout(later, wait)
   }
 }
+// 创建防抖的抓拍函数
+const debouncedSnapshot = debounce(async (item) => {
+  const key = getKey(item)
+
+  // 如果正在加载，直接返回
+  if (loadingStates[key]) return
+
+  try {
+    loadingStates[key] = true
+
+    let req = {
+      'deviceId': item.deviceId,
+      'channelId': item.channelId,
+    }
+
+    let res = await dcOpt.snapshotImage(req);
+
+    if (res.data.code === 200) {
+      if (res.data.data===null||res.data.data===''){
+        ElMessage.success({
+          message: "设备不支持",
+          duration: 2000
+        })
+      }else {
+        ElMessage.success({
+          message: "抓拍成功",
+          duration: 2000
+        })
+      }
+
+      // 延迟刷新
+      setTimeout(() => {
+        getChannels(item.deviceId);
+      }, 500)
+
+    } else {
+      ElMessage.error("抓拍失败：设备不支持")
+    }
+  } catch (error) {
+    console.error('抓拍失败:', error)
+    ElMessage.error(`抓拍失败`)
+  } finally {
+    // 延迟清除 loading 状态，避免按钮闪烁
+    setTimeout(() => {
+      loadingStates[key] = false
+    }, 1000)
+  }
+}, 300) // 300ms 防抖时间
 
 const getImage = async (url) => {
   if (!url) return imgUrl;

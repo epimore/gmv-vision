@@ -26,6 +26,9 @@ const downTaskInfo = (data) => {
 const snapshotImage = (data) => {
     return http.post("/opt/snapshot/image", data);
 };
+const overviewImage = (data) => {
+    return http.post("/opt/overview/image", data);
+};
 const tearDownTask = (data) => {
     return http.post("/opt/teardown/task", data);
 };
@@ -63,5 +66,6 @@ export default {
     tearDownTask,
     rmFile,
     down_video,
-    snapshotImage
+    snapshotImage,
+    overviewImage
 }
