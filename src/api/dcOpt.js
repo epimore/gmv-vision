@@ -23,7 +23,9 @@ const createDownloadTask = (data) => {
 const downTaskInfo = (data) => {
     return http.post("/opt/down/info", data);
 };
-
+const snapshotImage = (data) => {
+    return http.post("/opt/snapshot/image", data);
+};
 const tearDownTask = (data) => {
     return http.post("/opt/teardown/task", data);
 };
@@ -60,5 +62,6 @@ export default {
     downTaskInfo,
     tearDownTask,
     rmFile,
-    down_video
+    down_video,
+    snapshotImage
 }

@@ -32,6 +32,16 @@
                 <span style="margin-left: 3vb;">
                 <el-text type="primary" size="small">{{ item.ptzTypeStr }}</el-text>
               </span>
+                <span style="margin-left: 3vb;">
+                <el-button type="info"
+                           :icon="CameraFilled"
+                           circle
+                           :disabled="item.status !== 'ON' || item.snapshot != 1"
+                           @click="snapshotImage(item)"
+                           title="相机图像快照"
+                           @mouseenter="showTooltip = true"
+                           @mouseleave="showTooltip = false"/>
+              </span>
               </template>
               <el-image
                   v-loading="item.picUrl && !imageUrls[item.picUrl]"
@@ -115,8 +125,9 @@ import infosApi from "@/api/info.js";
 import {ElMessage} from "element-plus";
 import PlayLive from "@/views/info/PlayLive.vue";
 import PlayBack from "@/views/info/PlayBack.vue";
-import {Download, Refresh, RefreshLeft, RefreshRight, ZoomIn, ZoomOut,} from '@element-plus/icons-vue'
+import {CameraFilled, Download, Refresh, RefreshLeft, RefreshRight, ZoomIn, ZoomOut,} from '@element-plus/icons-vue'
 import Pics from "@/views/info/PicPage.vue";
+import dcOpt from "@/api/dcOpt.js";
 
 const imgUrl = new URL('@/assets/ipc.png', import.meta.url).href
 
@@ -188,6 +199,19 @@ watchEffect(async () => {
     }
   }
 });
+
+const snapshotImage = async (item) =>{
+  let req = {
+    'deviceId': item.deviceId,
+    'channelId': item.channelId,
+  }
+  let res = await dcOpt.snapshotImage(req);
+  if (res.data.code === 200) {
+    ElMessage.success("抓拍成功")
+  } else {
+    ElMessage.error("抓拍失败：设备不支持")
+  }
+}
 
 const getImage = async (url) => {
   if (!url) return imgUrl;
