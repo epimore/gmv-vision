@@ -225,10 +225,11 @@ const downVideo = (fileId, videoUrl) => {
 }
 const rmLoading = ref(false);
 
-const rmVideo = (file) => {
+const rmVideo = (fileId) => {
   rmLoading.value = true;
   let req = {
-    'param': file
+    'param1': props.videoInfo.deviceId,
+    'param2': fileId
   }
   dcOpt.rmFile(req).then(res => {
     if (res.data.code === 200) {
@@ -244,7 +245,8 @@ const stopLoading = ref(false);
 const stopDown = (fileId) => {
   stopLoading.value = true;
   let req = {
-    'param': fileId
+    'param1': props.videoInfo.deviceId,
+    'param2': fileId
   }
   dcOpt.tearDownTask(req).then(res => {
     if (res.data.code === 200) {
@@ -294,6 +296,7 @@ const playRateChange = async (val) => {
   console.log(val);
   // console.log("change time", dayjs(val).format('YYYY-MM-DD HH:mm:ss'));
   let speedMode = {
+    'deviceId': props.videoInfo.deviceId,
     'streamId': streamId.value,
     'speedRate': val
   }
@@ -392,8 +395,8 @@ const formatTooltip = (val) => {
 }
 
 const sliderTimeChange = async (val) => {
-  // console.log("change time", dayjs(val).format('YYYY-MM-DD HH:mm:ss'));
   let seekMode = {
+    'deviceId': props.videoInfo.deviceId,
     'streamId': streamId.value,
     'seekSecond': (val - min.value) / 1000
   }
