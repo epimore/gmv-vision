@@ -18,7 +18,6 @@
         <el-table-column prop="alias" label="设备名称" width="200"/>
         <el-table-column prop="domainId" label="SIP服务器ID" width="190"/>
         <el-table-column prop="domain" label="SIP服务器域" width="110"/>
-        <el-table-column prop="heartbeatSec" label="心跳周期(秒)" width="105"/>
         <el-table-column prop="status" label="状态" width="70">
           <template #default="scope">
             <el-tag :type="scope.row.status === '1' ? 'success' : 'danger'">{{
