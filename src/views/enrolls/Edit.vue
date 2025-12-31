@@ -78,9 +78,10 @@
           </el-form-item>
         </el-col>
       </el-row>
+
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="设备名称：" prop="alias" required>
+          <el-form-item label="设备别名：" prop="alias" required>
             <el-input v-model="formInfo.alias"></el-input>
           </el-form-item>
         </el-col>
@@ -112,7 +113,18 @@
           </el-form-item>
         </el-col>
       </el-row>
-
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="心跳周期(秒)：" prop="heartbeatSec">
+            <el-input v-model="formInfo.heartbeatSec" placeholder="默认60秒"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="地址：" prop="address">
+            <el-input v-model="formInfo.address"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
           <el-form-item label="经度：" prop="longitude">
@@ -125,9 +137,7 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="地址：" prop="address">
-        <el-input v-model="formInfo.address"></el-input>
-      </el-form-item>
+
       <el-form-item label="Tips：">
         <div class="sip-server-remark">
           <div><span><strong>1.传输方式：</strong>支持UDP/TCP；</span></div>
@@ -198,6 +208,7 @@ watch(
 
 const formInfo = reactive({
   deviceId: '',
+  heartbeatSec: '',
   alias: '',
   longitude: '',
   latitude: '',
@@ -241,6 +252,7 @@ watch(
                 Object.assign(formInfo, {
                   // 先重置为默认结构
                   deviceId: '',
+                  heartbeatSec: '',
                   alias: '',
                   longitude: '',
                   latitude: '',
@@ -271,6 +283,7 @@ watch(
           // 添加设备：重置表单为初始状态
           Object.assign(formInfo, {
             deviceId: '',
+            heartbeatSec: '',
             alias: '',
             longitude: '',
             latitude: '',
